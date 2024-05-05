@@ -1,18 +1,19 @@
 import React from 'react'
+import BotCard from './BotCard'
 
-function BotCollection() {
+function BotCollection({ bot, onEnlist, onDischarge, onViewDetails, enlisted }) {
   return (
-    <div className="grid grid-cols-4 gap-4">
-      <div className='w-full'>
-        <img src='https://robohash.org/nostrumrepellendustenetur.png?size=300x300&set=set1'
-        alt=''
-        className='w-full-[250px] object-cover'
+    <div>
+      {BroadcastChannel.map((bot) =>{
+        <BotCard 
+        key={bot.id}
+        bot={bot}
+        onEnlist={onEnlist}
+        onDischarge={onDischarge}
+        onViewDetails={onViewDetails}
+        enlisted={enlistedBots.some((enlistedBot) => enlistedBot.id === bot.id)} 
         />
-        <div>
-           <h5 className='font-bold text-xl'>wHz-93</h5>
-           <h5 className='font-semibold'>1010010101001101100011000111101</h5>
-        </div>
-      </div>
+      } )}
     </div>
   )
 }
