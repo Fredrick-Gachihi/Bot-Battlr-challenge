@@ -1,62 +1,58 @@
-// import { useState } from 'react'
-// import reactLogo from './assets/react.svg'
-// import viteLogo from '/vite.svg'
-// import './App.css'
-// import BotCollection from './components/BotCollection'
-// import { useEffect } from 'react'
-
-// function App() {
-//   const [ bot, setBot] = useState();
-  
-
-// useEffect(() => {
-//   fetch("http://localhost:3030/bots")
-//     .then((response) => {
-//       if (!response.ok) {
-//         throw new Error('Failed to fetch bots');
-//       }
-//       return response.json();
-//     })
-//     .then((data) => {
-//       if (data && data.bot) {
-//         setBot(data.bot);
-//       } else {
-//         throw new Error('Invalid response format');
-//       }
-//     })
-//     .catch((error) => {
-//       console.error('Error fetching bots:', error);
-//     });
-// }, []);
-//   return 
-//   <>
-//     <BotCollection bots={bot} />
-//     </>
- 
-// }
-
-// export default App
-
-// App.jsx
-import React, { useState, useEffect } from 'react';
-import reactLogo from './assets/react.svg';
-import viteLogo from '/vite.svg';
-import './App.css';
+import { useState } from 'react'
+import reactLogo from './assets/react.svg'
+import viteLogo from '/vite.svg'
+import './App.css'
 import BotCollection from './components/BotCollection';
-import BotSpecs from './components/BotSpecs';
-import YourBotArmy from './components/YourBotArmy';
-import SortBar from './components/SortBar';
+import { useEffect } from 'react'
 
 function App() {
-  // ... other state and logic
+  const [ bot, setBot] = useState();
+    const handleEnlist = (bot) => {
+    setEnlistedBots([...enlistedBots, bot]);
+      const [error, setError] = useState(null); 
+  };
 
+  const handleRelease = (botId) => {
+    setEnlistedBots(enlistedBots.filter((enlistedBot) => enlistedBot.id !== botId));
+  };
+
+  const handleViewDetails = (botId) => {
+    setSelectedBot(bots.find((bot) => bot.id === botId)); // Find and select bot for BotSpecs
+  };
+
+  const handleSortChange = (newSortCriteria) => {
+    setSortBy(newSortCriteria);
+  };
+
+  
+
+useEffect(() => {
+  fetch("http://localhost:3030/bots")
+    .then((response) => {
+      if (!response.ok) {
+        throw new Error('Failed to fetch bots');
+      }
+      return response.json();
+    })
+    .then((data) => {
+      if (data && data.bot) {
+        setBot(data.bot);
+      } else {
+        throw new Error('Invalid response format');
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching bots:', error);
+      console.log(response)
+    });
+}, []);
   return (
-    <div className="App">
+        <div className="App">
       <header className="App-header">
         <img src={reactLogo} className="App-logo" alt="React logo" />
         <img src={viteLogo} alt="Vite logo" className="Vite-logo" />
       </header>
-      {error && <p className="error">Error: {error.message}</p>}
+      {error && <p className="error">Error: {error}</p>}
       {selectedBot ? (
         <BotSpecs
           bot={selectedBot}
@@ -80,4 +76,5 @@ function App() {
   );
 }
 
-export default App;
+export default App
+
