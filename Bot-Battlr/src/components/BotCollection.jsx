@@ -1,9 +1,9 @@
 import { useState } from "react";
 
-function BotCollection({ onEnlist }) {a
+function BotCollection({ onEnlist }) {
   const [selectedFilters, setSelectedFilters] = useState([]);
   const [sortBy, setSortBy] = useState(null);
-
+  const [ error,setError ] =useState([])
   return (
     <div className="bot-collection">
       <SearchBar onSearchChange={handleSearchChange} />

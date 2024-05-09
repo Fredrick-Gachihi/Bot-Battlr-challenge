@@ -4,12 +4,21 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import BotCollection from './components/BotCollection';
 import { useEffect } from 'react'
+import SortBar from './components/SortBar'
+import YourBotArmy from './components/YourBotArmy'
+import botCard from './components/BotCard'
+import BotSpecs from './components/BotSpecs'
+
 
 function App() {
-  const [ bot, setBot] = useState();
+  const [ bots, setBots] = useState();
+  const [error, setError] = useState(null); 
+  const [selectedBot, setSelectedBot] = useState(null);
+  const [enlistedBots, setEnlistedBots] =useState(null);
+  const [sortBy, setSortBy] = useState(null);
+
     const handleEnlist = (bot) => {
     setEnlistedBots([...enlistedBots, bot]);
-      const [error, setError] = useState(null); 
   };
 
   const handleRelease = (botId) => {
@@ -36,7 +45,7 @@ useEffect(() => {
     })
     .then((data) => {
       if (data && data.bot) {
-        setBot(data.bot);
+        setBots(data.bot);
       } else {
         throw new Error('Invalid response format');
       }
