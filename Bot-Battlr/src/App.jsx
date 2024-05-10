@@ -1,89 +1,62 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React, { useState, useEffect } from 'react';
+import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import BotCollection from './components/BotCollection';
-import { useEffect } from 'react'
-import SortBar from './components/SortBar'
-import YourBotArmy from './components/YourBotArmy'
-import botCard from './components/BotCard'
-import BotSpecs from './components/BotSpecs'
+import YourBotArmy from './components/YourBotArmy';
+import BotSpecs from './components/BotSpecs';
+import SortBar from './components/SortBar';
 
 
-function App() {
-  const [ bots, setBots] = useState();
-  const [error, setError] = useState(null); 
-  const [selectedBot, setSelectedBot] = useState(null);
-  const [enlistedBots, setEnlistedBots] =useState(null);
-  const [sortBy, setSortBy] = useState(null);
+const App = () => {
+  const [botCollection, setBotCollection] = useState([]);
+  const [yourBotArmy, setYourBotArmy] = useState([]);
 
-    const handleEnlist = (bot) => {
-    setEnlistedBots([...enlistedBots, bot]);
+  // Fetch bot data from backend upon component mount
+  useEffect(() => {
+    fetch('http://localhost:3000/bots')
+      .then(response => response.json())
+      .then(data => setBotCollection(data))
+      .catch(error => console.error('Error fetching bot data:', error));
+  }, []);
+
+  // Functions to add, release, and discharge bots
+  const addToArmy = (bot) => {
+    setYourBotArmy([...yourBotArmy, bot]);
+    setBotCollection(botCollection.filter((b) => b.id !== bot.id));
   };
 
-  const handleRelease = (botId) => {
-    setEnlistedBots(enlistedBots.filter((enlistedBot) => enlistedBot.id !== botId));
+  const releaseFromArmy = (bot) => {
+    setYourBotArmy(yourBotArmy.filter((b) => b.id !== bot.id));
+    setBotCollection([...botCollection, bot]);
   };
 
-  const handleViewDetails = (botId) => {
-    setSelectedBot(bots.find((bot) => bot.id === botId)); // Find and select bot for BotSpecs
+  const dischargeBot = (bot) => {
+    // Code to delete the bot from backend
+    setYourBotArmy(yourBotArmy.filter((b) => b.id !== bot.id));
   };
 
-  const handleSortChange = (newSortCriteria) => {
-    setSortBy(newSortCriteria);
-  };
-
-  
-
-useEffect(() => {
-  fetch("http://localhost:3030/bots")
-    .then((response) => {
-      if (!response.ok) {
-        throw new Error('Failed to fetch bots');
-      }
-      return response.json();
-    })
-    .then((data) => {
-      if (data && data.bot) {
-        setBots(data.bot);
-      } else {
-        throw new Error('Invalid response format');
-      }
-    })
-    .catch((error) => {
-      console.error('Error fetching bots:', error);
-      console.log(response)
-    });
-}, []);
   return (
-        <div className="App">
-      <header className="App-header">
-        <img src={reactLogo} className="App-logo" alt="React logo" />
-        <img src={viteLogo} alt="Vite logo" className="Vite-logo" />
-      </header>
-      {error && <p className="error">Error: {error}</p>}
-      {selectedBot ? (
-        <BotSpecs
-          bot={selectedBot}
-          onGoBack={() => setSelectedBot(null)}
-          onEnlist={handleEnlist}
-        />
-      ) : (
-        <>
-          <SortBar sortBy={sortBy} onSortChange={handleSortChange} />
-          <BotCollection
-            bots={bots}
-            onEnlist={handleEnlist}
-  
-          />
+    <Router>
+      <Switch>
+        <Route path="/bots" exact>
+          <div>
+            <SortBar />
+            <SearchBar /> {/* Include SearchBar component */}
+            <BotCollection
+              bots={botCollection}
+              addToArmy={addToArmy}
+              botSpecsLinkEnabled={true}
+            />
+          </div>
           <YourBotArmy
-            enlistedBots={enlistedBots}
-            onRelease={handleRelease}/>
-        </>
-      )}
-    </div>
+            bots={yourBotArmy}
+            releaseFromArmy={releaseFromArmy}
+            dischargeBot={dischargeBot}
+          />
+        </Route>
+        <Route path="/bots/:botId" component={BotSpecs} />
+      </Switch>
+    </Router>
   );
-}
+};
 
-export default App
-
+export default App;

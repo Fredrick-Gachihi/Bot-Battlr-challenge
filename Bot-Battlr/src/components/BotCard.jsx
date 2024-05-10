@@ -68,17 +68,18 @@ function BotCard({ bot, onEnlist, onDischarge, onViewDetails, enlisted, sameClas
   };
 
   return (
-    <div className="grid grid-cols-4 gap-4">
-      <div className="w-full">
-        <img src={image} className="w-full-[250px] object-cover" />
-        <h3>Name: {name}</h3>
+    <div className="bot-card">
+      <div className="bot-image">
+        <img src={image} alt={name} />
       </div>
-      <div>
-        <span>Health: {health}</span>
-        <span>Armor: {armor}</span>
-        <span>Damage: {damage}</span>
+      <div className="bot-info">
+        <h3>{name}</h3>
+        <p>Class: {classType}</p>
+        <p>Health: {health}</p>
+        <p>Damage: {damage}</p>
+        <p>Armor: {armor}</p>
       </div>
-      <>
+      <div className="bot-actions">
         {enlisted ? (
           <button onClick={handleDischarge}>Discharge</button>
         ) : (
@@ -87,7 +88,7 @@ function BotCard({ bot, onEnlist, onDischarge, onViewDetails, enlisted, sameClas
           </button>
         )}
         <button onClick={handleViewDetails}>View Details</button>
-      </>
+      </div>
     </div>
   );
 }

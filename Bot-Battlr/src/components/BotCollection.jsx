@@ -1,26 +1,14 @@
-import { useState } from "react";
+import React from 'react';
+import BotCard from './BotCard';
 
-function BotCollection({ onEnlist }) {
-  const [selectedFilters, setSelectedFilters] = useState([]);
-  const [sortBy, setSortBy] = useState(null);
-  const [ error,setError ] =useState([])
+function BotCollection({ bots, onEnlist }) {
   return (
     <div className="bot-collection">
-      <SearchBar onSearchChange={handleSearchChange} />
-
-      <FilterBar
-        filters={["Support", "Medic", "Assault", "Defender", "Captain", "Witch"]}
-        selectedFilters={selectedFilters}
-        onFilterChange={setSelectedFilters}
-      />
-
-      <SortBar sortBy={sortBy} onSortChange={setSortBy} />
-
-      {filteredAndSortedBots.map((bot) => (
+      {bots.map(bot => (
         <BotCard
           key={bot.id}
           bot={bot}
-          onEnlist={() => onEnlist(bot)}
+          onEnlist={onEnlist}
         />
       ))}
     </div>
@@ -28,4 +16,3 @@ function BotCollection({ onEnlist }) {
 }
 
 export default BotCollection;
-
