@@ -1,62 +1,56 @@
 import React, { useState, useEffect } from 'react';
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import BotCollection from './components/BotCollection';
 import YourBotArmy from './components/YourBotArmy';
-import BotSpecs from './components/BotSpecs';
-import SortBar from './components/SortBar';
+import './App.css';
 
+function App() {
+  const [bots, setBots] = useState([]);
+  const [botArmy, setBotArmy] = useState([]);
+  const [sortCriteria, setSortCriteria] = useState('health');
 
-const App = () => {
-  const [botCollection, setBotCollection] = useState([]);
-  const [yourBotArmy, setYourBotArmy] = useState([]);
-
-  // Fetch bot data from backend upon component mount
   useEffect(() => {
-    fetch('http://localhost:3000/bots')
-      .then(response => response.json())
-      .then(data => setBotCollection(data))
-      .catch(error => console.error('Error fetching bot data:', error));
+    fetch("http://localhost:3000/bots")
+      .then((response) => response.json())
+      .then((data) => setBots(data))
+      .catch((error) => console.error(error));
   }, []);
-
-  // Functions to add, release, and discharge bots
-  const addToArmy = (bot) => {
-    setYourBotArmy([...yourBotArmy, bot]);
-    setBotCollection(botCollection.filter((b) => b.id !== bot.id));
+  const handleSort = (criteria) => {
+    setSortCriteria(criteria);
   };
 
-  const releaseFromArmy = (bot) => {
-    setYourBotArmy(yourBotArmy.filter((b) => b.id !== bot.id));
-    setBotCollection([...botCollection, bot]);
+  const sortedBots = [...bots].sort((a, b) => b[sortCriteria] - a[sortCriteria]);
+
+  const handleAddBot = (bot) => {
+    if (!botArmy.some((b) => b.bot_class === bot.bot_class)) {
+      setBotArmy([...botArmy, bot]);
+    }
+  };
+  const handleReleaseBot = (bot) => {
+    const newBotArmy = botArmy.filter((b) => b.id !== bot.id);
+    setBotArmy(newBotArmy);
   };
 
-  const dischargeBot = (bot) => {
-    // Code to delete the bot from backend
-    setYourBotArmy(yourBotArmy.filter((b) => b.id !== bot.id));
-  };
 
-  return (
-    <Router>
-      <Switch>
-        <Route path="/bots" exact>
-          <div>
-            <SortBar />
-            <SearchBar /> {/* Include SearchBar component */}
-            <BotCollection
-              bots={botCollection}
-              addToArmy={addToArmy}
-              botSpecsLinkEnabled={true}
-            />
-          </div>
-          <YourBotArmy
-            bots={yourBotArmy}
-            releaseFromArmy={releaseFromArmy}
-            dischargeBot={dischargeBot}
-          />
-        </Route>
-        <Route path="/bots/:botId" component={BotSpecs} />
-      </Switch>
-    </Router>
-  );
+const handleDischargeBot = (bot) => {
+  fetch(`http://localhost:3000/bots/${bot.id}`, { method: 'DELETE' })
+    .then(() => {
+      const newBots = bots.filter((b) => b.id !== bot.id);
+      setBots(newBots);
+      handleReleaseBot(bot);
+    })
+    .catch((error) => console.error(error));
 };
+  return (
+    <div className="App">
+      <select onChange={(e) => handleSort(e.target.value)}>
+        <option value="health">Sort by Health</option>
+        <option value="damage">Sort by Damage</option>
+        <option value="armor">Sort by Armor</option>
+      </select>
+      <YourBotArmy bots={botArmy} onReleaseBot={handleReleaseBot} onDischargeBot={handleDischargeBot} />
+      <BotCollection bots={sortedBots} onAddBot={handleAddBot} />
+    </div>
+  );
+}
 
 export default App;

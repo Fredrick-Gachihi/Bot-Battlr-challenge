@@ -1,25 +1,27 @@
-import React from 'react';
+import React from "react";
 
-function YourBotArmy({ bots, releaseFromArmy, dischargeBot }) {
+const YourBotArmy = ({ bots, onReleaseBot, onDischargeBot }) => {
   return (
-    <div className="your-bot-army">
-      <h2>Your Bot Army</h2>
-      {bots.length === 0 ? (
-        <p>You haven't enlisted any bots yet.</p>
-      ) : (
-        <ul className="bot-list">
-          {bots.map(bot => (
-            <li key={bot.id}>
-              <div className="bot-info">
-                <img src={bot.avatar_url} alt={bot.name} />
-                <h3>{bot.name}</h3>
-                <button onClick={() => releaseFromArmy(bot)}>Release</button>
-                <button onClick={() => dischargeBot(bot)}>Discharge</button>
-              </div>
-            </li>
-          ))}
-        </ul>
-      )}
+    <div className="your-army">
+      <h1>Your Elite Bot Squad</h1>
+      <ul className="bot-list">
+        {bots.map((bot) => (
+          <li key={bot.id} className="bot-item">
+            <h2>{bot.name}</h2>
+            <img src={bot.avatar_url} alt={bot.name} className="bot-avatar" />
+            <p>Health: {bot.health}</p>
+            <p>Damage: {bot.damage}</p>
+            <p>Armor: {bot.armor}</p>
+            <p>Class: {bot.bot_class}</p>
+            <p>Created: {bot.created_at}</p>
+            <p>Updated: {bot.updated_at}</p>
+            <div className="button-group">
+              <button onClick={() => onReleaseBot(bot)} className="release-button">Release</button>
+              <button onClick={() => onDischargeBot(bot)} className="discharge-button">Discharge</button>
+            </div>
+          </li>
+        ))}
+      </ul>
     </div>
   );
 }

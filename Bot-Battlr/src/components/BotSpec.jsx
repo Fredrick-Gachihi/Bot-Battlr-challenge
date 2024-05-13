@@ -1,10 +1,10 @@
 import React from 'react';
 
-function BotSpecs({ bot, onGoBack, onEnlist }) {
+const BotSpecs = ({ bot, onGoBack, onEnlist }) => {
   return (
     <div className="bot-specs">
-      <button onClick={onGoBack}>Go Back</button>
-      <h2>{bot.name}</h2>
+     <button onClick={onGoBack}>Go Back</button>
+      <h2>{bot.name} Specs</h2>
       <img src={bot.avatar_url} alt={bot.name} />
       <p>Health: {bot.health}</p>
       <p>Damage: {bot.damage}</p>
@@ -14,6 +14,6 @@ function BotSpecs({ bot, onGoBack, onEnlist }) {
       <button onClick={() => onEnlist(bot)}>Enlist</button>
     </div>
   );
-}
+};
 
 export default BotSpecs;
